@@ -26,6 +26,7 @@ use Yii;
  *          'minCropBoxWidth' => 1600,
  *          'minCropBoxHeight' => 900
  *      ],
+ *      'clientEvents' => [],
  *      'options' => [],
  *      'imageOptions' => [],
  *      'modalOptions' => [],
@@ -99,9 +100,15 @@ class Cropper extends Widget {
 
 	/**
 	 * @var array Additional cropper options
-	 * @see https://github.com/fengyuanchen/cropper/blob/master/README.md#options
+	 * @see https://github.com/fengyuanchen/cropper#options
 	 */
 	public $clientOptions = [];
+
+	/**
+	 * @var array the event handlers for the underlying plugin.
+	 * @see https://github.com/fengyuanchen/cropper#events
+	 */
+	public $clientEvents = [];
 
 	/**
 	 * @var array Ajax options for send crop-requests
@@ -206,7 +213,7 @@ class Cropper extends Widget {
 				}
 
 			case self::TYPE_INLINE:
-				$options =  $this->options;
+				$options = $this->options;
 				Html::addCssClass($options, 'crop-image-container');
 				echo Html::beginTag('div', $options);
 				echo Html::img($this->image, $imageOptions);
@@ -298,5 +305,22 @@ JS;
 		}
 
 		$view->registerJs($js);
+
+
+		$this->registerClientEvents();
+	}
+
+	/**
+	 * Registers JS event handlers that are listed in [[clientEvents]].
+	 */
+	protected function registerClientEvents() {
+		if (!empty($this->clientEvents)) {
+			$id = $this->options['id'];
+			$js = [];
+			foreach ($this->clientEvents as $event => $handler) {
+				$js[] = "jQuery('#$id').on('$event', $handler);";
+			}
+			$this->view->registerJs(implode("\n", $js));
+		}
 	}
 }
