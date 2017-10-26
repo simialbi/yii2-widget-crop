@@ -133,6 +133,8 @@ class Cropper extends Widget {
 	 * @inheritdoc
 	 */
 	public function init() {
+		$this->registerTranslations();
+
 		if (!isset($this->options['id'])) {
 			$this->options['id'] = $this->getId();
 		}
@@ -143,8 +145,6 @@ class Cropper extends Widget {
 				])
 			];
 		}
-
-		$this->registerTranslations();
 
 		parent::init();
 	}
