@@ -242,6 +242,8 @@ class Cropper extends Widget {
 			$clientOptions['aspectRatio'] = $this->aspectRatio;
 		}
 
+		$clientOptions = Json::encode($clientOptions);
+
 		switch ($this->type) {
 			case self::TYPE_MODAL:
 				$js = <<<JS
