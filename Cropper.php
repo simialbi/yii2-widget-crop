@@ -182,8 +182,21 @@ class Cropper extends Widget {
 				);
 
 				if ($this->type === self::TYPE_MODAL) {
-					$modalOptions       = $this->modalOptions;
-					$modalOptions['id'] = $this->options['id'].'-target';
+					$footer = Html::button(Yii::t('simialbi/crop/cropper', 'Close'), [
+						'type'         => 'button',
+						'class'        => 'btn btn-default',
+						'data-dismiss' => 'modal'
+					]);
+					$footer .= Html::button(Yii::t('simialbi/crop/cropper', $this->buttonContent, ['icon' => $this->buttonIcon]), [
+						'type'         => 'button',
+						'class'        => 'btn btn-success',
+						'data-dismiss' => 'modal'
+					]);
+
+					$modalOptions           = $this->modalOptions;
+					$modalOptions['id']     = $this->options['id'].'-target';
+					$modalOptions['footer'] = $footer;
+
 					Modal::begin($modalOptions);
 				} elseif ($this->type === self::TYPE_BUTTON) {
 					echo Html::beginTag('div', [
@@ -248,14 +261,14 @@ class Cropper extends Widget {
 			case self::TYPE_MODAL:
 				$js = <<<JS
 var modal = jQuery('#$id'),
-	image = jQuery('#$selector');
+	image = jQuery('$selector');
 
 modal.on({
 	'shown.bs.modal': function () {
 		image.cropper($clientOptions);
 	},
 	'hidden.bs.modal': function () {
-		image.cropper(destroy);
+		image.cropper('destroy');
 	}
 });
 JS;
@@ -263,14 +276,14 @@ JS;
 			case self::TYPE_BUTTON:
 			case self::TYPE_INLINE:
 				$js = <<<JS
-var image = jQuery('#$selector');
+var image = jQuery('$selector');
 image.cropper($clientOptions);
 JS;
 
 				break;
 		}
 
-		if ($this->cropUrl) {
+		if (!empty($this->cropUrl)) {
 			$ajaxOptions = Json::encode(ArrayHelper::merge([
 				'url'      => Url::to($this->cropUrl),
 				'method'   => 'POST',
