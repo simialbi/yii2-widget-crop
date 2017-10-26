@@ -14,10 +14,10 @@ use yii\web\AssetBundle;
 class CropperAsset extends AssetBundle {
 	public $sourcePath = '@npm';
 	public $css = [
-		'cropperjs/dist/cropper.min.css'
+		'cropper/dist/cropper.min.css'
 	];
 	public $js = [
-		'cropperjs/dist/cropper.min.js'
+		'cropper/dist/cropper.min.js'
 	];
 	public $depends = [
 		'yii\web\JqueryAsset'
@@ -29,10 +29,10 @@ class CropperAsset extends AssetBundle {
 	public function init() {
 		if (YII_DEBUG) {
 			$this->js = [
-				'cropperjs/dist/cropper.js'
+				'cropper/dist/cropper.js'
 			];
 			$this->css = [
-				'cropperjs/dist/cropper.css'
+				'cropper/dist/cropper.css'
 			];
 		}
 
