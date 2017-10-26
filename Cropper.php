@@ -211,16 +211,14 @@ class Cropper extends Widget {
 				echo Html::beginTag('div', $options);
 				echo Html::img($this->image, $imageOptions);
 				echo Html::endTag('div');
-				if ($this->type === self::TYPE_INLINE) {
+
+				if ($this->type === self::TYPE_MODAL) {
+					Modal::end();
+					break;
+				} elseif ($this->type === self::TYPE_BUTTON) {
+					echo Html::endTag('div');
 					break;
 				}
-
-			case self::TYPE_MODAL:
-				Modal::end();
-				break;
-			case self::TYPE_BUTTON:
-				echo Html::endTag('div');
-				break;
 		}
 		$content = ob_get_clean();
 
