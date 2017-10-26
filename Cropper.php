@@ -206,7 +206,9 @@ class Cropper extends Widget {
 				}
 
 			case self::TYPE_INLINE:
-				echo Html::beginTag('div', ['class' => 'crop-image-container']);
+				$options =  $this->options;
+				Html::addCssClass($options, 'crop-image-container');
+				echo Html::beginTag('div', $options);
 				echo Html::img($this->image, $imageOptions);
 				echo Html::endTag('div');
 				if ($this->type === self::TYPE_INLINE) {
@@ -248,7 +250,7 @@ class Cropper extends Widget {
 		CropperAsset::register($view);
 
 		$clientOptions = ArrayHelper::merge($this->_defaultClientOptions, $this->clientOptions);
-		$selector      = "#$id .crop-image-container > img";
+		$selector      = "#$id > img";
 		$js            = '';
 
 		if (!empty($this->aspectRatio)) {
@@ -260,7 +262,7 @@ class Cropper extends Widget {
 		switch ($this->type) {
 			case self::TYPE_MODAL:
 				$js = <<<JS
-var modal = jQuery('#$id'),
+var modal = jQuery('#$id-target'),
 	image = jQuery('$selector');
 
 modal.on({
