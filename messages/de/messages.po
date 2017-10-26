@@ -1,0 +1,9 @@
+#: Cropper.php
+msgctxt "simialbi/crop/cropper"
+msgid "Select crop area and click \"crop\" button"
+msgstr "Schneiden Sie das Bild zu und klicken sie auf \"übernehmen\""
+
+#: Cropper.php
+msgctxt "simialbi/crop/cropper"
+msgid "Crop {icon}"
+msgstr "Zuschneiden {icon}"
