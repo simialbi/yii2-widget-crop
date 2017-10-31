@@ -6,6 +6,7 @@ use yii\base\Widget;
 use yii\bootstrap\Html;
 use yii\bootstrap\Modal;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Inflector;
 use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\web\JsExpression;
@@ -263,19 +264,20 @@ class Cropper extends Widget {
 		}
 
 		$clientOptions = Json::encode($clientOptions);
+		$jsId          = Inflector::slug($id, '_');
 
 		switch ($this->type) {
 			case self::TYPE_MODAL:
 				$js = <<<JS
-var modal = jQuery('#$id-target'),
-	image = jQuery('$selector');
+var modal$jsId = jQuery('#$id-target'),
+	image$jsId = jQuery('$selector');
 
-modal.on({
+modal$jsId.on({
 	'shown.bs.modal': function () {
-		image.cropper($clientOptions);
+		image$jsId.cropper($clientOptions);
 	},
 	'hidden.bs.modal': function () {
-		image.cropper('destroy');
+		image$jsId.cropper('destroy');
 	}
 });
 JS;
@@ -283,8 +285,8 @@ JS;
 			case self::TYPE_BUTTON:
 			case self::TYPE_INLINE:
 				$js = <<<JS
-var image = jQuery('$selector');
-image.cropper($clientOptions);
+var image$jsId = jQuery('$selector');
+image$jsId.cropper($clientOptions);
 JS;
 
 				break;
@@ -298,7 +300,7 @@ JS;
 				'dataType' => 'JSON'
 			], $this->ajaxOptions));
 			$js          .= <<<JS
-image.on('crop', function() {
+image$jsId.on('crop', function() {
 	jQuery.ajax($ajaxOptions);
 });
 JS;
