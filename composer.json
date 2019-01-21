@@ -1,7 +1,14 @@
 {
 	"name": "simialbi/yii2-widget-crop",
 	"description": "Yii2 wrapper for Image Cropper javascript library",
-	"keywords": ["yii2", "yii2-widgets", "image", "crop", "cropper", "widget"],
+	"keywords": [
+		"yii2",
+		"yii2-widgets",
+		"image",
+		"crop",
+		"cropper",
+		"widget"
+	],
 	"homepage": "https://github.com/simialbi/yii2-widget-crop#readme",
 	"type": "yii2-extension",
 	"license": "MIT",
@@ -14,7 +21,7 @@
 		},
 		{
 			"name": "Simon Karlen",
-			"email": "simi.albi@gmail.com"
+			"email": "simi.albi@outlook.com"
 		}
 	],
 	"support": {
@@ -24,19 +31,27 @@
 	"require": {
 		"php": ">=5.4.0",
 		"yiisoft/yii2": "~2.0",
-		"yiisoft/yii2-bootstrap": "~2.0",
-		"npm-asset/cropper": "~3.1"
+		"npm-asset/cropper": "^4.0.0"
+	},
+	"suggest": {
+		"yiisoft/yii2-bootstrap": "Use cropper in a modal",
+		"yiisoft/yii2-bootstrap4": "Use cropper in a modal"
 	},
 	"config": {
 		"process-timeout": 1800,
 		"fxp-asset": {
-			"installer-paths": {
-				"npm-asset-library": "vendor/npm",
-				"bower-asset-library": "vendor/bower"
-			}
+			"enable": false
 		}
 	},
 	"autoload": {
-		"psr-4": { "simialbi\\yii2\\crop\\": "" }
-	}
+		"psr-4": {
+			"simialbi\\yii2\\crop\\": "src"
+		}
+	},
+	"repositories": [
+		{
+			"type": "composer",
+			"url": "https://asset-packagist.org"
+		}
+	]
 }

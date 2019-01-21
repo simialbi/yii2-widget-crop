@@ -24,7 +24,7 @@ class CropperAsset extends AssetBundle {
 	];
 
 	/**
-	 * @inheritdoc
+	 * {@inheritdoc}
 	 */
 	public function init() {
 		if (YII_DEBUG) {

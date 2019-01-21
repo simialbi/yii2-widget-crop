@@ -2,15 +2,15 @@
 
 namespace simialbi\yii2\crop;
 
+use Yii;
+use yii\base\InvalidConfigException;
 use yii\base\Widget;
-use yii\bootstrap\Html;
-use yii\bootstrap\Modal;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 use yii\helpers\Inflector;
 use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\web\JsExpression;
-use Yii;
 
 /**
  * This widget renders an image cropper either in a model with TYPE_MODAL or inline with TYPE_INLINE or as collapsible
@@ -48,74 +48,64 @@ class Cropper extends Widget {
 	const TYPE_MODAL = 'modal';
 	const TYPE_INLINE = 'inline';
 	const TYPE_BUTTON = 'button';
-
 	/**
 	 * @var string URL for send crop data
 	 */
 	public $cropUrl;
-
 	/**
 	 * @var string Original image URL
 	 */
 	public $image;
-
 	/**
 	 * @var float Aspect ratio for crop box. If not set(null) - it means free aspect ratio
 	 */
 	public $aspectRatio;
-
 	/**
 	 * @var string display type of cropper
 	 */
-	public $type = self::TYPE_MODAL;
-
+	public $type = self::TYPE_INLINE;
+	/**
+	 * @var string Modal class name. Only required if $type is TYPE_MODAL
+	 */
+	public $modalClass;
 	/**
 	 * @var array Modal view options
 	 */
 	public $modalOptions = [];
-
 	/**
 	 * @var array Button view options
 	 */
 	public $buttonOptions = [];
-
 	/**
 	 * @var array HTML widget options
 	 */
 	public $options = [];
-
 	/**
 	 * @var array HTML-options for image tag
 	 */
 	public $imageOptions = [];
-
 	/**
 	 * @var string Text to show in button
 	 */
 	public $buttonContent = 'Crop {icon}';
-
 	/**
 	 * @var string Icon to show in button
 	 */
 	public $buttonIcon = '<i class="glyphicon glyphicon-scissors"></i>';
-
 	/**
 	 * @var array Additional cropper options
 	 * @see https://github.com/fengyuanchen/cropper#options
 	 */
 	public $clientOptions = [];
-
 	/**
 	 * @var array the event handlers for the underlying plugin.
 	 * @see https://github.com/fengyuanchen/cropper#events
 	 */
 	public $clientEvents = [];
-
 	/**
 	 * @var array Ajax options for send crop-requests
 	 */
 	public $ajaxOptions = [];
-
 	/**
 	 * @var array Default HTML-options for image tag
 	 */
@@ -123,7 +113,6 @@ class Cropper extends Widget {
 		'class' => 'cropper-image img-responsive',
 		'alt'   => 'crop-image'
 	];
-
 	/**
 	 * @var array Default cropper options
 	 * @see https://github.com/fengyuanchen/cropper/blob/master/README.md#options
@@ -138,7 +127,8 @@ class Cropper extends Widget {
 	];
 
 	/**
-	 * @inheritdoc
+	 * {@inheritdoc}
+	 * @throws InvalidConfigException
 	 */
 	public function init() {
 		$this->registerTranslations();
@@ -154,11 +144,23 @@ class Cropper extends Widget {
 			];
 		}
 
+		if ($this->type === self::TYPE_MODAL) {
+			if (empty($this->modalClass)) {
+				$this->modalClass = 'yii\bootstrap\Modal';
+			}
+			if (!class_exists($this->modalClass)) {
+				$this->modalClass = 'yii\bootstrap4\Modal';
+			}
+			if (!class_exists($this->modalClass)) {
+				throw new InvalidConfigException("Either 'yiisoft/yii2-bootstrap' or 'yiisoft/yii2-bootstrap4' must be installed to use as TYPE_MODAL!");
+			}
+		}
+
 		parent::init();
 	}
 
 	/**
-	 * @inheritdoc
+	 * {@inheritdoc}
 	 */
 	public function run() {
 		$imageOptions = ArrayHelper::merge($this->_defaultImageOptions, $this->imageOptions);
@@ -171,21 +173,21 @@ class Cropper extends Widget {
 				$buttonOptions = ArrayHelper::merge([
 					'class' => 'btn btn-primary'
 				], $this->buttonOptions, [
-					'id'   => '#'.$this->options['id'].'-btn',
+					'id'   => '#' . $this->options['id'] . '-btn',
 					'data' => [
 						'toggle' => ($this->type === self::TYPE_MODAL) ? 'modal' : 'collapse',
-						'target' => '#'.$this->options['id'].'-target'
+						'target' => '#' . $this->options['id'] . '-target'
 					]
 				]);
 
 				if ($this->type === self::TYPE_BUTTON) {
 					$buttonOptions['aria-expanded'] = 'false';
-					$buttonOptions['aria-controls'] = $this->options['id'].'-target';
+					$buttonOptions['aria-controls'] = $this->options['id'] . '-target';
 				}
 
 				echo Html::a(
 					Yii::t('simialbi/crop/cropper', $this->buttonContent, ['icon' => $this->buttonIcon]),
-					['#'.$this->options['id']],
+					['#' . $this->options['id']],
 					$buttonOptions
 				);
 
@@ -202,13 +204,13 @@ class Cropper extends Widget {
 					]);
 
 					$modalOptions           = $this->modalOptions;
-					$modalOptions['id']     = $this->options['id'].'-target';
+					$modalOptions['id']     = $this->options['id'] . '-target';
 					$modalOptions['footer'] = $footer;
 
-					Modal::begin($modalOptions);
+					call_user_func([$this->modalClass, 'begin'], $modalOptions);
 				} elseif ($this->type === self::TYPE_BUTTON) {
 					echo Html::beginTag('div', [
-						'id'    => $this->options['id'].'-target',
+						'id'    => $this->options['id'] . '-target',
 						'class' => 'collapse'
 					]);
 				}
@@ -221,7 +223,7 @@ class Cropper extends Widget {
 				echo Html::endTag('div');
 
 				if ($this->type === self::TYPE_MODAL) {
-					Modal::end();
+					call_user_func([$this->modalClass, 'end']);
 					break;
 				} elseif ($this->type === self::TYPE_BUTTON) {
 					echo Html::endTag('div');
@@ -242,7 +244,7 @@ class Cropper extends Widget {
 		Yii::$app->i18n->translations['simialbi/crop*'] = [
 			'class'          => 'yii\i18n\GettextMessageSource',
 			'sourceLanguage' => 'en-US',
-			'basePath'       => __DIR__.'/messages'
+			'basePath'       => __DIR__ . '/messages'
 		];
 	}
 
@@ -269,8 +271,8 @@ class Cropper extends Widget {
 		switch ($this->type) {
 			case self::TYPE_MODAL:
 				$js = <<<JS
-var modal$jsId = jQuery('#$id-target'),
-	image$jsId = jQuery('$selector');
+var modal$jsId = jQuery('#$id-target');
+var image$jsId = jQuery('$selector');
 
 modal$jsId.on({
 	'shown.bs.modal': function () {
