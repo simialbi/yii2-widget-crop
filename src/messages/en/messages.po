@@ -1,0 +1,9 @@
+#: Cropper.php
+msgctxt "simialbi/crop/cropper"
+msgid "Select crop area and click \"crop\" button"
+msgstr "Select crop area and click \"crop\" button"
+
+#: Cropper.php
+msgctxt "simialbi/crop/cropper"
+msgid "Crop {icon}"
+msgstr "Crop {icon}"
