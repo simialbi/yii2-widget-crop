@@ -31,7 +31,8 @@
 	"require": {
 		"php": ">=5.4.0",
 		"yiisoft/yii2": "~2.0",
-		"npm-asset/cropper": "^4.0.0"
+		"npm-asset/cropperjs": "^1.5.7",
+		"npm-asset/jquery-cropper": "^1.0.1"
 	},
 	"suggest": {
 		"yiisoft/yii2-bootstrap": "Use cropper in a modal",

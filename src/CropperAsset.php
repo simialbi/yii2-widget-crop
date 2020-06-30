@@ -12,12 +12,13 @@ use yii\web\AssetBundle;
  * @since 1.0
  */
 class CropperAsset extends AssetBundle {
-	public $sourcePath = '@npm/cropper/dist';
+	public $sourcePath = '@npm';
 	public $css = [
-		'cropper.min.css'
+		'cropperjs/dist/cropper.min.css'
 	];
 	public $js = [
-		'cropper.min.js'
+		'cropperjs/dist/cropper.min.js',
+        'jquery-cropper/dist/jquery-cropper.min.js'
 	];
 	public $depends = [
 		'yii\web\JqueryAsset'
@@ -28,12 +29,12 @@ class CropperAsset extends AssetBundle {
 	 */
 	public function init() {
 		if (YII_DEBUG) {
-			$this->js = [
-				'cropper.js'
-			];
-			$this->css = [
-				'cropper.css'
-			];
+            foreach ($this->js as $k => $js) {
+                $this->js[$k] = str_replace('.min', '', $js);
+            }
+            foreach ($this->css as $k => $css) {
+                $this->css[$k] = str_replace('.min', '', $css);
+            }
 		}
 
 		parent::init();
