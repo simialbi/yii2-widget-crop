@@ -31,8 +31,8 @@
 	"require": {
 		"php": ">=5.4.0",
 		"yiisoft/yii2": "~2.0",
-		"npm-asset/cropperjs": "^1.5.7",
-		"npm-asset/jquery-cropper": "^1.0.1"
+		"bower-asset/cropperjs": "^1.5.7",
+		"bower-asset/jquery-cropper": "^1.0.1"
 	},
 	"suggest": {
 		"yiisoft/yii2-bootstrap": "Use cropper in a modal",
@@ -42,6 +42,9 @@
 		"process-timeout": 1800,
 		"fxp-asset": {
 			"enable": false
+		},
+		"allow-plugins": {
+			"yiisoft/yii2-composer": true
 		}
 	},
 	"autoload": {
