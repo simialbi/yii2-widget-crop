@@ -138,13 +138,6 @@ class Cropper extends Widget
         if (!isset($this->options['id'])) {
             $this->options['id'] = $this->getId();
         }
-        if (empty($this->modalOptions)) {
-            $this->modalOptions = [
-                'header' => Html::tag('h3', Yii::t('simialbi/crop/cropper', 'Select crop area and click "crop" button'), [
-                    'class' => 'modal-title'
-                ])
-            ];
-        }
 
         if ($this->type === self::TYPE_MODAL) {
             if (empty($this->modalClass)) {
@@ -159,6 +152,14 @@ class Cropper extends Widget
             if (!class_exists($this->modalClass)) {
                 throw new InvalidConfigException("Either 'yiisoft/yii2-bootstrap' or 'yiisoft/yii2-bootstrap4' or 'yiisoft/yii2-bootstrap5' must be installed to use as TYPE_MODAL!");
             }
+        }
+
+        if (empty($this->modalOptions) && $this->modalClass == 'yii\bootstrap\Modal') {
+            $this->modalOptions = [
+                'header' => Html::tag('h3', Yii::t('simialbi/crop/cropper', 'Select crop area and click "crop" button'), [
+                    'class' => 'modal-title'
+                ])
+            ];
         }
 
         parent::init();
@@ -176,13 +177,20 @@ class Cropper extends Widget
         switch ($this->type) {
             case self::TYPE_MODAL:
             case self::TYPE_BUTTON:
+                $prefix = 'bs-';
+                $bntClass= 'secondary';
+                if (!class_exists('\yii\bootstrap5\Modal') && !is_subclass_of(new $this->modalClass(), '\yii\bootstrap5\Modal')) {
+                    $prefix = '';
+                    $bntClass= 'default';
+                }
+
                 $buttonOptions = ArrayHelper::merge([
                     'class' => 'btn btn-primary'
                 ], $this->buttonOptions, [
                     'id' => '#' . $this->options['id'] . '-btn',
                     'data' => [
-                        'toggle' => ($this->type === self::TYPE_MODAL) ? 'modal' : 'collapse',
-                        'target' => '#' . $this->options['id'] . '-target'
+                        $prefix . 'toggle' => ($this->type === self::TYPE_MODAL) ? 'modal' : 'collapse',
+                        $prefix . 'target' => '#' . $this->options['id'] . '-target'
                     ]
                 ]);
 
@@ -200,13 +208,13 @@ class Cropper extends Widget
                 if ($this->type === self::TYPE_MODAL) {
                     $footer = Html::button(Yii::t('simialbi/crop/cropper', 'Close'), [
                         'type' => 'button',
-                        'class' => 'btn btn-default',
-                        'data-dismiss' => 'modal'
+                        'class' => 'btn btn-' . $bntClass,
+                        'data-' . $prefix . 'dismiss' => 'modal'
                     ]);
                     $footer .= Html::button(Yii::t('simialbi/crop/cropper', $this->buttonContent, ['icon' => $this->buttonIcon]), [
                         'type' => 'button',
                         'class' => 'btn btn-success',
-                        'data-dismiss' => 'modal'
+                        'data-' . $prefix . 'dismiss' => 'modal'
                     ]);
 
                     $modalOptions = $this->modalOptions;
